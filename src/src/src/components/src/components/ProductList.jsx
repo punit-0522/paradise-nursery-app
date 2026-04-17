@@ -1,47 +1,76 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../redux/CartSlice";
+import { addItem } from "../redux/CartSlice";
 import { Link } from "react-router-dom";
 
-const plants = [
-  { id: 1, name: "Aloe Vera", price: 10, category: "Succulent" },
-  { id: 2, name: "Snake Plant", price: 15, category: "Indoor" },
-  { id: 3, name: "Peace Lily", price: 20, category: "Indoor" },
-  { id: 4, name: "Cactus", price: 8, category: "Succulent" },
-  { id: 5, name: "Fern", price: 12, category: "Outdoor" },
-  { id: 6, name: "Bamboo", price: 18, category: "Outdoor" },
-];
+const plantsData = {
+  Indoor: [
+    { id: 1, name: "Snake Plant", price: 15, image: "https://via.placeholder.com/100" },
+    { id: 2, name: "Peace Lily", price: 20, image: "https://via.placeholder.com/100" },
+  ],
+  Outdoor: [
+    { id: 3, name: "Fern", price: 12, image: "https://via.placeholder.com/100" },
+    { id: 4, name: "Bamboo", price: 18, image: "https://via.placeholder.com/100" },
+  ],
+  Succulent: [
+    { id: 5, name: "Aloe Vera", price: 10, image: "https://via.placeholder.com/100" },
+    { id: 6, name: "Cactus", price: 8, image: "https://via.placeholder.com/100" },
+  ],
+};
 
 const ProductList = () => {
   const dispatch = useDispatch();
   const cart = useSelector(state => state.cart.items);
 
+  // Total items in cart
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Check if item already added
+  const isAdded = (id) => cart.find(item => item.id === id);
 
   return (
     <div>
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/cart">Cart ({totalItems})</Link>
+
+      {/* ✅ Navbar */}
+      <nav style={{ marginBottom: "20px" }}>
+        <Link to="/">Home</Link> |{" "}
+        <Link to="/plants">Plants</Link> |{" "}
+        <Link to="/cart">Cart ({totalItems})</Link>
       </nav>
 
-      <h2>Plants</h2>
+      <h2>Our Plants</h2>
 
-      {plants.map(plant => {
-        const added = cart.find(i => i.id === plant.id);
+      {/* ✅ Categories */}
+      {Object.keys(plantsData).map((category) => (
+        <div key={category}>
+          <h3>{category}</h3>
 
-        return (
-          <div key={plant.id}>
-            <h3>{plant.name}</h3>
-            <p>₹{plant.price}</p>
+          {plantsData[category].map((plant) => {
+            const added = isAdded(plant.id);
 
-            <button
-              onClick={() => dispatch(addToCart(plant))}
-              disabled={added}
-            >
-              {added ? "Added" : "Add to Cart"}
-            </button>
-          </div>
-        );
-      })}
+            return (
+              <div key={plant.id} style={{ marginBottom: "15px" }}>
+                
+                {/* ✅ Image */}
+                <img src={plant.image} alt={plant.name} width="100" />
+
+                {/* ✅ Details */}
+                <h4>{plant.name}</h4>
+                <p>Price: ₹{plant.price}</p>
+
+                {/* ✅ Add to Cart */}
+                <button
+                  onClick={() => dispatch(addItem(plant))}
+                  disabled={added}
+                >
+                  {added ? "Added" : "Add to Cart"}
+                </button>
+
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
     </div>
   );
 };
