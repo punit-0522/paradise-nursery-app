@@ -21,17 +21,13 @@ const ProductList = () => {
   const dispatch = useDispatch();
   const cart = useSelector(state => state.cart.items);
 
-  // Total items in cart
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Check if item already added
   const isAdded = (id) => cart.find(item => item.id === id);
 
   return (
     <div>
-
-      {/* ✅ Navbar */}
-      <nav style={{ marginBottom: "20px" }}>
+      <nav>
         <Link to="/">Home</Link> |{" "}
         <Link to="/plants">Plants</Link> |{" "}
         <Link to="/cart">Cart ({totalItems})</Link>
@@ -39,38 +35,30 @@ const ProductList = () => {
 
       <h2>Our Plants</h2>
 
-      {/* ✅ Categories */}
-      {Object.keys(plantsData).map((category) => (
+      {Object.keys(plantsData).map(category => (
         <div key={category}>
           <h3>{category}</h3>
 
-          {plantsData[category].map((plant) => {
+          {plantsData[category].map(plant => {
             const added = isAdded(plant.id);
 
             return (
-              <div key={plant.id} style={{ marginBottom: "15px" }}>
-                
-                {/* ✅ Image */}
+              <div key={plant.id}>
                 <img src={plant.image} alt={plant.name} width="100" />
-
-                {/* ✅ Details */}
                 <h4>{plant.name}</h4>
-                <p>Price: ₹{plant.price}</p>
+                <p>₹{plant.price}</p>
 
-                {/* ✅ Add to Cart */}
                 <button
                   onClick={() => dispatch(addItem(plant))}
                   disabled={added}
                 >
                   {added ? "Added" : "Add to Cart"}
                 </button>
-
               </div>
             );
           })}
         </div>
       ))}
-
     </div>
   );
 };
